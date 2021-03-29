@@ -1,17 +1,18 @@
 #include <LiquidCrystal.h>
 
+//Declaring data pins
 const int lcd1 = 2;
 const int lcd2 = 3;
 const int lcd3 = 4;
 const int lcd4 = 5;
 const int lcd5 = 6;
 const int lcd6 = 7;
-const int button1 = 8;
-const int button2 = 9;
-const int button3 = 10;
-
+const int button1 = 8; //Up Button
+const int button2 = 9; //Down Button
+const int button3 = 10; //Set Button
 
 LiquidCrystal lcd(lcd1, lcd2, lcd3, lcd4, lcd5, lcd6);
+
 int scn, mte, hr;
 
 void setup() {
@@ -19,13 +20,15 @@ void setup() {
   pinMode(button2, INPUT);
   pinMode(button3, INPUT);
   lcd.begin(16, 2);
-  settime(hr, "Hour", button1, button2, button3);
-  settime(mte, "Minure", button1, button2, button3);
-  settime(scn, "Second", button1, button2, button3);
+  hr = settime("Hour", 24); //The settime function has a default max value of 60, so we only have to declare it here
+  mte = settime("Minute");
+  scn = settime("Second");
+  lcd.clear();
 }
 
 void loop() {
   scn = scn + 1;
+  //The following IF chain checks to see if any value has reached its limit
   if(scn == 60)
   {
     scn = 0;
@@ -40,6 +43,9 @@ void loop() {
       }
     }
   }
+
+  //Future alarm code will go here
+  
   lcd.setCursor(0, 0);
   lcd.print(hr);
   lcd.print(":");
@@ -51,8 +57,9 @@ void loop() {
 }
 
 
-void settime(int var, String varname, int uppin, int downpin, int setpin)
+int settime(String varname, int maxnumber = 60)
 {
+  int var;
   int setvar = 1;
   while(setvar == 1)
     {
@@ -62,21 +69,37 @@ void settime(int var, String varname, int uppin, int downpin, int setpin)
       lcd.print(varname);
       lcd.setCursor(0, 1);
       lcd.print(var);
-      upstate = digitalRead(uppin);
-      downstate = digitalRead(downpin);
-      setstate = digitalRead(setpin);
+      lcd.print(" ");
+      upstate = digitalRead(button1);
+      downstate = digitalRead(button2);
+      setstate = digitalRead(button3);
+      delay(250);
       if(upstate == LOW)
       {
-        var = var + 1;
+        if(var == maxnumber)
+        {
+          var = 0;
+        }
+        else
+        {
+          var = var + 1;
+        }
       }
       if(downstate == LOW)
       {
-        var = var - 1;
+        if(var == 0)
+        {
+          var = maxnumber;
+        }
+        else
+        {
+          var = var - 1;
+        }
       }
       if(setstate == LOW)
       {
         setvar = 0;
+        return(var);
       }
-      delay(500);
     }
 }
