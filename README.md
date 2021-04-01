@@ -5,4 +5,4 @@
 # Arduino Alarmclock
 <img src="https://raw.githubusercontent.com/owenwastaken/arduino-alarmclock/main/img/logo.png" width="25%">
 ## Sample Diagram
-![Diagram](https://raw.githubusercontent.com/owenwastaken/arduino-alarmclock/main/img/diagram.jpg)
+<img src="https://raw.githubusercontent.com/owenwastaken/arduino-alarmclock/main/img/diagram.jpg">
