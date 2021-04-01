@@ -1,4 +1,10 @@
 #include <LiquidCrystal.h>
+#include <Wire.h>
+#include <DS3231.h> //Get ds3231FS from the Tools > Manage Libraries > DS3231
+
+RTClib myRTC;
+
+DS3231 Clock;
 
 //Declaring data pins
 const int lcd1 = 2;
@@ -13,53 +19,10 @@ const int button3 = 10; //Set Button
 
 LiquidCrystal lcd(lcd1, lcd2, lcd3, lcd4, lcd5, lcd6);
 
-int scn, mte, hr;
-
-void setup() {
-  pinMode(button1, INPUT);
-  pinMode(button2, INPUT);
-  pinMode(button3, INPUT);
-  lcd.begin(16, 2);
-  hr = settime("Hour", 24); //The settime function has a default max value of 60, so we only have to declare it here
-  mte = settime("Minute");
-  scn = settime("Second");
-  lcd.clear();
-}
-
-void loop() {
-  scn = scn + 1;
-  //The following IF chain checks to see if any value has reached its limit
-  if(scn == 60)
-  {
-    scn = 0;
-    mte = mte + 1;
-    if(mte == 60)
-    {
-      mte = 0;
-      hr = hr + 1;
-      if(hr == 24)
-      {
-        hr = 0;
-      }
-    }
-  }
-
-  //Future alarm code will go here
-  
-  lcd.setCursor(0, 0);
-  lcd.print(hr);
-  lcd.print(":");
-  lcd.print(mte);
-  lcd.print(":");
-  lcd.print(scn);
-  lcd.print("     ");
-  delay(1000);
-}
-
-
-int settime(String varname, int maxnumber = 60)
+//The settime function is before start and loop beacuse older versions of arduino require it.
+int settime(String varname, int maxnumber = 60, int minnumber = 0)
 {
-  int var;
+  int var = minnumber;
   int setvar = 1;
   while(setvar == 1)
     {
@@ -78,7 +41,7 @@ int settime(String varname, int maxnumber = 60)
       {
         if(var == maxnumber)
         {
-          var = 0;
+          var = minnumber;
         }
         else
         {
@@ -87,7 +50,7 @@ int settime(String varname, int maxnumber = 60)
       }
       if(downstate == LOW)
       {
-        if(var == 0)
+        if(var == minnumber)
         {
           var = maxnumber;
         }
@@ -102,4 +65,41 @@ int settime(String varname, int maxnumber = 60)
         return(var);
       }
     }
+}
+
+void setup() {
+  Wire.begin();
+  pinMode(button1, INPUT);
+  pinMode(button2, INPUT);
+  pinMode(button3, INPUT);
+  lcd.begin(16, 2);
+  Clock.setClockMode(false);
+  Clock.setHour(settime("Hour", 24)); //The settime function has a default max value of 60, so we only have to declare it here
+  Clock.setMinute(settime("Minute"));
+  Clock.setSecond(settime("Second"));
+  Clock.setDate(settime("Day", 31));
+  Clock.setMonth(settime("Month", 12));
+  Clock.setYear(settime("Year", -1, 2000));
+  lcd.clear();
+}
+
+void loop() {
+  DateTime now = myRTC.now();
+  
+  lcd.setCursor(0, 0);
+  lcd.print(now.hour());
+  lcd.print(":");
+  lcd.print(now.minute());
+  lcd.print(":");
+  lcd.print(now.second());
+  lcd.print("     ");
+  lcd.setCursor(0, 1);
+  lcd.print(now.day());
+  lcd.print("/");
+  lcd.print(now.month());
+  lcd.print("/");
+  lcd.print(now.year());
+    //Future alarm code will go here
+
+  delay(1000);
 }
