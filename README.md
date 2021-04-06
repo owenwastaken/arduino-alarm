@@ -10,7 +10,7 @@
 
 ## Sample Diagram
 
-![Diagram]("https://raw.githubusercontent.com/owenwastaken/arduino-alarmclock/main/img/diagram.jpg")
+![Diagram](https://raw.githubusercontent.com/owenwastaken/arduino-alarmclock/main/img/diagram.jpg)
 
 ## Required materials
 
