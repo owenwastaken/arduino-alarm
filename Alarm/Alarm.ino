@@ -32,10 +32,17 @@ const int button1 = 8; //Up and alarm toggle button
 const int button2 = 9; //Down and alarm set button
 const int button3 = 10; //Set button
 const int buzzerpin = 11; //Buzzer pin
+
+//These two variables are for the clicks when you press a button
 const int buzzerfreq = 250; //defualt buzzer frequency
 const int buzzertime = 5; //Time that each tone is played (MS)
 
-//Custom alarm icon created using https://maxpromer.github.io/LCD-Character-Creator/
+const int alarmtime = 500; //How long the alarm beep is (MS)
+const int alarmfreq = 450; //Alarm frequency
+
+int oldhour = -1;
+
+//Custom  alarm icon created using https://maxpromer.github.io/LCD-Character-Creator/
 //This can be changed to whatever icon you want
 byte alarmIcon[] = {
   B00000,
@@ -45,8 +52,7 @@ byte alarmIcon[] = {
   B10111,
   B10001,
   B01110,
-  B00000
-};
+  B00000};
 
 //Change this if you are connecting the LCD to different pins than the ones showed in the readme file and diagram
 LiquidCrystal lcd(lcd1, lcd2, lcd3, lcd4, lcd5, lcd6);
@@ -150,6 +156,25 @@ void completeset()
   Clock.setYear(settime("Year", now.year(), -1, 2000) - 48); //Had to subtract 48 because the RTC module's system time starts in 1973
 }
 
+void playalarm(){
+  int delaytime = alarmfreq;
+  bool runalarm = true;
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Alarm");
+  while(runalarm){
+    tone(buzzerpin, buzzerfreq);
+    if (buttonpressed(button1) ||  buttonpressed(button2) || buttonpressed(button3))
+    {
+      runalarm = false;
+      delaytime = 0;
+    }
+    delay(delaytime);
+    noTone(buzzerpin);
+    delay(delaytime);
+  }
+  }
+
 void setup() {
   bool setloop = true;
   //Initiate the connection to the RTC module and buttons
@@ -168,12 +193,20 @@ void setup() {
 
 void loop() {
   DateTime now = myRTC.now();
-  int hour, minute, day, month, year;
+  int second, hour, minute, day, month, year;
   int alarmhour, alarmmin;
   bool alarm;
 
   hour = now.hour();
   minute = now.minute();
+  second = now.second();
+
+  //Made to limit the refresh rate for month, day and year to preserve RTC battery
+  if(hour != oldhour){
+    month = now.month();
+    day = now.day();
+    year = now.year();
+  }
 
   if(buttonpressed(button1)) //Button 1 is the alarm toggle button
   {
@@ -184,26 +217,43 @@ void loop() {
       //Turns the alarm off
       alarm = false;
       lcd.print("Alarm OFF");
-      //Put code here that changes the RTC alarm to OFF
     }
     else //If alarm == false
     {
       //Turns the alarm on
       alarm = true;
-      lcd.print("Alarm ON");
-      //Put code here that changes the RTC alarm to ON
     }
     delay(2000);
   }
 
   if(buttonpressed(button2)) //Button 2 is the alarm set button
   {
-    //Put alarm set code here
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Set Alarm");
+    delay(1500);
+    lcd.clear();
+    lcd.setCursor(0 ,0);
+    int alarmhour = settime("Alarm Hour", alarmhour, 23);
+    delay(500);
+    int alarmmin = settime("Alarm Minute", alarmmin);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Alarm Set For:");
+    lcd.setCursor(0, 1);
+    lcd.print(alarmhour);
+    lcd.print(":");
+    lcd.print(alarmmin);
+    delay(1500);
+    lcd.clear();
   }
 
   if(buttonpressed(button3)) //Button 3 will set the time
   {
     lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Set time");
+    delay(1500);
     completeset();
   }
 
@@ -215,17 +265,11 @@ void loop() {
   lcd.print(":");
   lcd.print(now.second());
   lcd.print("     ");
-  lcd.setCursor(15, 0);
+  //lcd.setCursor(15, 0);
 
-  if(alarm == true)
+  if(alarm && hour == alarmhour && minute == alarmmin && second <= 3)
   {
-    if(hour == alarmhour);
-    {
-      if(minute == alarmmin);
-      {
-        lcd.print(".");
-      }
-    }
+    playalarm();
   }
 
   lcd.setCursor(0, 1); //Moves down to second line for printing the date
@@ -233,19 +277,19 @@ void loop() {
   //To change the format just comment out the US code block and uncomment the EU code block
 
   //This code prints the US date format MM/DD/YY
-  lcd.print(now.month());
+  lcd.print(month);
   lcd.print("/");
-  lcd.print(now.day());
+  lcd.print(day);
   lcd.print("/");
-  lcd.print(now.year());
+  lcd.print(year);
 
   //This code prints in the EU date format DD/MM/YY
   /*
-  lcd.print(now.day());
+  lcd.print(day);
   lcd.print("/");
-  lcd.print(now.month());
+  lcd.print(month);
   lcd.print("/");
-  lcd.print(now.year());
+  lcd.print(year);
   */
 
   delay(1000);
