@@ -85,9 +85,8 @@ int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumbe
     time = currentnumber;
   }
 
-  int settime = 1;
   lcd.clear();
-  while(settime == 1)
+  while(true)
     {
       bool dodelay;
       lcd.setCursor(0, 0);
@@ -96,7 +95,7 @@ int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumbe
       lcd.setCursor(0, 1);
       lcd.print(time);
       lcd.print(" ");
-      if(dodelay == true)
+      if(dodelay)
       {
         delay(250);
         dodelay = false;
@@ -111,7 +110,7 @@ int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumbe
         }
         else
         {
-          time = time + 1;
+          time++;
         }
       }
       if(buttonpressed(button2))
@@ -120,14 +119,11 @@ int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumbe
         dodelay = true;
         if(time == minnumber)
         {
-          if(maxnumber > 0)
-          {
-            time = maxnumber;
-          }
+          time = maxnumber;
         }
         else
         {
-          time = time - 1;
+          time--;
         }
       }
       if(buttonpressed(button3))
@@ -157,26 +153,26 @@ void completeset()
 }
 
 void playalarm(){
-  int delaytime = alarmfreq;
+  int alarmdelay = alarmtime;
   bool runalarm = true;
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Alarm");
   while(runalarm){
-    tone(buzzerpin, buzzerfreq);
+    tone(buzzerpin, alarmfreq);
     if (buttonpressed(button1) ||  buttonpressed(button2) || buttonpressed(button3))
     {
+      //When button is pressed alarm is stopped
       runalarm = false;
-      delaytime = 0;
+      alarmdelay = 0;
     }
-    delay(delaytime);
+    delay(alarmdelay);
     noTone(buzzerpin);
-    delay(delaytime);
+    delay(alarmdelay);
   }
-  }
+}
 
 void setup() {
-  bool setloop = true;
   //Initiate the connection to the RTC module and buttons
   Wire.begin();
   DateTime now = myRTC.now();
@@ -187,14 +183,12 @@ void setup() {
   //This may be different for your LCD.
   //Change to (number of characters on one line, number of lines)
   lcd.begin(16, 2);
-
   lcd.createChar(1, alarmIcon); //Creating the alarmIcon LCD character in slot 1
 }
 
 void loop() {
   DateTime now = myRTC.now();
-  int second, hour, minute, day, month, year;
-  int alarmhour, alarmmin;
+  int second, hour, minute, day, month, year, alarmhour, alarmmin;
   bool alarm;
 
   hour = now.hour();
@@ -271,6 +265,8 @@ void loop() {
   {
     playalarm();
   }
+
+  //Print Alarm symbol. Code coming soon!
 
   lcd.setCursor(0, 1); //Moves down to second line for printing the date
 
