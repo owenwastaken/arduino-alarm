@@ -124,7 +124,7 @@ void completeset()
   delay(500);
   Clock.setMonth(settime("Month", now.month(), 12, 1));
   delay(500);
-  Clock.setYear(settime("Year", now.year(), -1, 2000) - 48); //Had to subtract 48 because the RTC module's system time starts in 1973
+  Clock.setYear(settime("Year", now.year(), -1, 2000) - 48); //Had to subtract 48 because the RTC module's system time starts in 1952
 }
 
 void playalarm(){
