@@ -50,7 +50,7 @@ bool alarm = false;
 //Initiating alarm time as a negative number to prevent people from turning on the alarm before the time is set
 int alarmmin = -1; int alarmhour = -1;
 
-//Custom  alarm icon created using https://maxpromer.github.io/LCD-Character-Creator/
+//Custom alarm icon created using https://maxpromer.github.io/LCD-Character-Creator/
 //This can be changed to whatever icon you want
 byte alarmIcon[] = {
   B00000,
@@ -70,18 +70,16 @@ bool buttonpressed(int pin) {if (digitalRead(pin) == HIGH) return true; else ret
 
 //The settime function is used for setting the time.
 //This had to go before setup() and loop() for it to work with older versions of the Arduino IDE
-int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumber = 0)
-{
+int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumber = 0 {
   int time;
 
-  //Only used if the RTC's year is below 2000
+  //If the RTC's year is below 2000 it will set it to 2000 to prevent having to manually scroll from year 0 to 2000
   if(currentnumber < minnumber) time = minnumber;
   else time = currentnumber;
 
   lcd.clear();
-  while(true)
-    {
-      bool dodelay;
+  bool dodelay;
+  while(true) {
       lcd.setCursor(0, 0);
       lcd.print("Set ");
       lcd.print(timeunit);
@@ -90,27 +88,23 @@ int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumbe
       lcd.print(" ");
       if(dodelay) {delay(250); dodelay = !dodelay;}
       //If there is a delay requested it will do the delay and turn off the request
-      if(buttonpressed(button1))
-      {
+      if(buttonpressed(button1)) {
         tone(buzzerpin, buzzerfreq, buzzertime);
         dodelay = true;
         if(time == maxnumber) time = minnumber;
-        else time++;
-      }
-      if(buttonpressed(button2))
-      {
+        else time++; }
+
+      if(buttonpressed(button2)) {
         tone(buzzerpin, buzzerfreq, buzzertime);
         dodelay = true;
         if(time == minnumber) time = maxnumber;
-        else time--;
-      }
+        else time--; }
+
       //Button3 returns the value (SET BUTTON)
-      if(buttonpressed(button3)) {tone(buzzerpin, buzzerfreq, buzzertime); return(time);}
-    }
+      if(buttonpressed(button3)) {tone(buzzerpin, buzzerfreq, buzzertime); return(time);} }
 }
 
-void completeset()
-{
+void completeset() {
   DateTime now = myRTC.now();
   //All of this is for setting the time
   Clock.setClockMode(false); //Sets to 24 hour mode
@@ -127,19 +121,18 @@ void completeset()
   Clock.setYear(settime("Year", now.year(), -1, 2000) - 48); //Had to subtract 48 because the RTC module's system time starts in 1952
 }
 
-void playalarm(){
+void playalarm() {
   int alarmdelay = alarmtime;
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Alarm");
-  while(true){
+  while(true) {
     tone(buzzerpin, alarmfreq);
     //When button is pressed alarm is stopped. This might make a harmless error when compiling but can be ignored
     if (buttonpressed(button1) ||  buttonpressed(button2) || buttonpressed(button3)) {noTone(buzzerpin); return 0;}
     delay(alarmdelay);
     noTone(buzzerpin);
-    delay(alarmdelay);
-  }
+    delay(alarmdelay); }
 }
 
 void setup() {
@@ -162,26 +155,22 @@ void loop() {
   hour = now.hour(); minute = now.minute(); second = now.second();
 
   //Made to limit polling for month, day and year to preserve RTC battery
-  if(hour != oldhour){month = now.month(); day = now.day(); year = now.year();}
+  if(hour != oldhour) {month = now.month(); day = now.day(); year = now.year();}
 
-  if(buttonpressed(button1)) //Button 1 is the alarm toggle button
-  {
+  //Alarm toggle button
+  if(buttonpressed(button1)) {
     lcd.clear();
     lcd.setCursor(0, 0);
     if(alarmhour != -1 || alarmmin != -1){
       alarm = !alarm;
       if(alarm) lcd.print("Alarm ON");
-      else lcd.print("Alarm OFF");
-    }
-    else
-    {
-      lcd.print("No alarm set");
-    }
+      else lcd.print("Alarm OFF"); }
+    else lcd.print("No alarm set");
     delay(2000);
   }
 
-  if(buttonpressed(button2)) //Button 2 is the alarm set button
-  {
+  //Alarm set button
+  if(buttonpressed(button2)) {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Set Alarm");
@@ -205,8 +194,8 @@ void loop() {
     lcd.clear();
   }
 
-  if(buttonpressed(button3)) //Button 3 will set the time
-  {
+  //Time set button
+  if(buttonpressed(button3)) {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Set time");
@@ -233,7 +222,7 @@ void loop() {
   if(alarm) lcd.write(1);
   else lcd.print(" ");
 
-  lcd.setCursor(0, 1); //Moves down to second line for printing the date
+  lcd.setCursor(0, 1);
 
   //To change the format just comment out the US code block and uncomment the EU code block
 
