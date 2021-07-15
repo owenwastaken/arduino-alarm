@@ -70,7 +70,7 @@ bool buttonpressed(int pin) {if (digitalRead(pin) == HIGH) return true; else ret
 
 //The settime function is used for setting the time.
 //This had to go before setup() and loop() for it to work with older versions of the Arduino IDE
-int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumber = 0 {
+int settime(String timeunit, int currentnumber, int maxnumber = 59, int minnumber = 0) {
   int time;
 
   //If the RTC's year is below 2000 it will set it to 2000 to prevent having to manually scroll from year 0 to 2000
