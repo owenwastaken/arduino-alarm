@@ -203,57 +203,60 @@ void loop() {
     lcd.print("Set time");
     delay(1500);
     completeset();
-
-  //This code block just displays the current time and date onto the lcd
-  lcd.setCursor(0, 0);
-  lcd.print(hour);
-  lcd.print(":");
-  if (minute < 10) lcd.print("0");
-  lcd.print(minute);
-  lcd.print(":");
-  if (second < 10) lcd.print("0");
-  lcd.print(second);
-  lcd.print("     ");
     sleepcountdown = secstillsleep; }
 
-  //Prints alarm symbol if alarm is on and blanks area if it is not
-  lcd.setCursor(15, 0);
-  if(alarm) lcd.write(1);
-  else lcd.print(" ");
-
-  lcd.setCursor(0, 1);
-
-  //To change the format just comment out the US code block and uncomment the EU code block
-
-  //This code prints the US date format MM/DD/YYYY
-  lcd.print(month);
-  lcd.print("/");
-  lcd.print(day);
-  lcd.print("/");
-  lcd.print(year);
-  lcd.print("   ");
-
-  //This code prints in the EU date format DD/MM/YYYY
-  /*
-  lcd.print(day);
-  lcd.print("/");
-  lcd.print(month);
-  lcd.print("/");
-  lcd.print(year);
-  lcd.print("   ");
-  */
-
-  //This code prints in the ISO date format YYYY/MM/DD
-  /*
-  lcd.print(year);
-  lcd.print("/");
-  lcd.print(month);
-  lcd.print("/");
-  lcd.print(day);
-  lcd.print("   ");
-  */
-
-  //Actual time counting is done on the RTC so this can be changed if you want a higher polling rate
-  delay(1000);
-}
   if(alarm && hour == alarmhour && minute == alarmmin && second <= 3) {playalarm(); sleepcountdown = secstillsleep;}
+
+  //Code block manages printing to lcd and sleep mode
+  //After a predetermined amount of time the LCD will go blank to preserve the life of it.
+  if(sleepcountdown != 0){
+    lcd.setCursor(0, 0);
+    lcd.print(hour);
+    lcd.print(":");
+    if (minute < 10) lcd.print("0");
+    lcd.print(minute);
+    lcd.print(":");
+    if (second < 10) lcd.print("0");
+    lcd.print(second);
+    lcd.print("  ");
+
+    //Prints alarm symbol if alarm is on and blanks area if it is not
+    lcd.setCursor(15, 0);
+    if(alarm) lcd.write(1);
+    else lcd.print(" ");
+
+    lcd.setCursor(0, 1);
+
+    //To change the format just comment out the US code block and uncomment the EU code block
+
+    //This code prints the US date format MM/DD/YYYY
+    lcd.print(month);
+    lcd.print("/");
+    lcd.print(day);
+    lcd.print("/");
+    lcd.print(year);
+    lcd.print("  ");
+
+    //This code prints in the EU date format DD/MM/YYYY
+    /*
+    lcd.print(day);
+    lcd.print("/");
+    lcd.print(month);
+    lcd.print("/");
+    lcd.print(year);
+    lcd.print("   ");
+    */
+
+    //This code prints in the ISO date format YYYY/MM/DD
+    /*
+    lcd.print(year);
+    lcd.print("/");
+    lcd.print(month);
+    lcd.print("/");
+    lcd.print(day);
+    lcd.print("   ");
+    */
+
+    if (sleepcountdown == 1) lcd.clear(); }
+    //Actual time counting is done on the RTC so this can be changed if you want a higher polling rate
+  delay(1000); }
