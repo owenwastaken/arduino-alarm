@@ -257,6 +257,7 @@ void loop() {
     lcd.print("   ");
     */
 
-    if (sleepcountdown == 1) lcd.clear(); }
+    if (sleepcountdown == 1) lcd.clear();
+    sleepcountdown -= 1; }
     //Actual time counting is done on the RTC so this can be changed if you want a higher polling rate
   delay(1000); }
