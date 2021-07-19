@@ -138,6 +138,8 @@ void playalarm() {
     noTone(buzzerpin);
     delay(alarmdelay); } }
 
+void resetsleepcounter() {sleepcountdown = secstillsleep;}
+
 void setup() {
   //Initiate the connection to the RTC module and buttons
   Wire.begin();
@@ -170,7 +172,7 @@ void loop() {
         else lcd.print("Alarm OFF"); }
       else lcd.print("No alarm set");
       delay(2000); }
-    sleepcountdown = secstillsleep; }
+    resetsleepcounter(); }
 
   //Alarm set button
   if(buttonpressed(button2)) {
@@ -196,7 +198,7 @@ void loop() {
       alarm = true;
       delay(1500);
       lcd.clear(); }
-    sleepcountdown = secstillsleep; }
+    resetsleepcounter(); }
 
   //Time set button
   if(buttonpressed(button3)) {
@@ -206,9 +208,9 @@ void loop() {
       lcd.print("Set time");
       delay(1500);
       completeset(); }
-    sleepcountdown = secstillsleep; }
+    resetsleepcounter(); }
 
-  if(alarm && hour == alarmhour && minute == alarmmin && second <= 3) {playalarm(); sleepcountdown = secstillsleep;}
+  if(alarm && hour == alarmhour && minute == alarmmin && second <= 3) {playalarm(); resetsleepcounter();}
 
   //Code block manages printing to lcd and sleep mode
   //After a predetermined amount of time the LCD will go blank to preserve the life of it.
