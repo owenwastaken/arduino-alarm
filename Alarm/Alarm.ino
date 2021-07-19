@@ -161,48 +161,51 @@ void loop() {
 
   //Alarm toggle button
   if(buttonpressed(button1)) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    if(alarmhour != -1 || alarmmin != -1) {
-      alarm = !alarm;
-      if(alarm) lcd.print("Alarm ON");
-      else lcd.print("Alarm OFF"); }
-    else lcd.print("No alarm set");
-    delay(2000);
+    if(sleepcountdown != 0) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      if(alarmhour != -1 || alarmmin != -1) {
+        alarm = !alarm;
+        if(alarm) lcd.print("Alarm ON");
+        else lcd.print("Alarm OFF"); }
+      else lcd.print("No alarm set");
+      delay(2000); }
     sleepcountdown = secstillsleep; }
 
   //Alarm set button
   if(buttonpressed(button2)) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Set Alarm");
-    delay(1500);
-    lcd.clear();
-    lcd.setCursor(0 ,0);
-    alarmhour = settime("Alarm Hour", alarmhour, 23);
-    delay(750);
-    alarmmin = settime("Alarm Minute", alarmmin);
-    lcd.clear();
+    if(sleepcountdown != 0) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Set Alarm");
+      delay(1500);
+      lcd.clear();
+      lcd.setCursor(0 ,0);
+      alarmhour = settime("Alarm Hour", alarmhour, 23);
+      delay(750);
+      alarmmin = settime("Alarm Minute", alarmmin);
+      lcd.clear();
 
-    lcd.setCursor(0, 0);
-    lcd.print("Alarm Set For:");
-    lcd.setCursor(0, 1);
-    lcd.print(alarmhour);
-    lcd.print(":");
-    if (alarmmin < 10) lcd.print("0");
-    lcd.print(alarmmin);
-    alarm = true;
-    delay(1500);
-    lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Alarm Set For:");
+      lcd.setCursor(0, 1);
+      lcd.print(alarmhour);
+      lcd.print(":");
+      if (alarmmin < 10) lcd.print("0");
+      lcd.print(alarmmin);
+      alarm = true;
+      delay(1500);
+      lcd.clear(); }
     sleepcountdown = secstillsleep; }
 
   //Time set button
   if(buttonpressed(button3)) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Set time");
-    delay(1500);
-    completeset();
+    if(sleepcountdown != 0) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Set time");
+      delay(1500);
+      completeset(); }
     sleepcountdown = secstillsleep; }
 
   if(alarm && hour == alarmhour && minute == alarmmin && second <= 3) {playalarm(); sleepcountdown = secstillsleep;}
