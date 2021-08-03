@@ -176,6 +176,7 @@ void loop() {
         else lcd.print(F("Alarm OFF")); }
       else lcd.print(F("No alarm set"));
       delay(2000); }
+      lcd.clear();
     resetsleepcounter(); }
 
   //Alarm set button
@@ -212,6 +213,7 @@ void loop() {
       lcd.print(F("Set time"));
       delay(1500);
       completeset(); }
+      lcd.clear();
     resetsleepcounter(); }
 
   if(alarm && hour == alarmhour && minute == alarmmin && second <= 3) {playalarm(); resetsleepcounter();}
